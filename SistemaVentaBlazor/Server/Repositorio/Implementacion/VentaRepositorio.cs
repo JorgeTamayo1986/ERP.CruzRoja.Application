@@ -73,8 +73,8 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
             if (buscarPor == "fecha")
             {
 
-                DateTime fech_Inicio = DateTime.ParseExact(fechaInicio, "dd/MM/yyyy", new CultureInfo("es-PE"));
-                DateTime fech_Fin = DateTime.ParseExact(fechaFin, "dd/MM/yyyy", new CultureInfo("es-PE"));
+                DateTime fech_Inicio = DateTime.ParseExact(fechaInicio, "dd/MM/yyyy", new CultureInfo("es-CO"));
+                DateTime fech_Fin = DateTime.ParseExact(fechaFin, "dd/MM/yyyy", new CultureInfo("es-CO"));
 
                 return query.Where(v =>
                     v.FechaRegistro.Value.Date >= fech_Inicio.Date &&
@@ -99,8 +99,8 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         public async Task<List<DetalleVenta>> Reporte(string FechaInicio, string FechaFin)
         {
 
-            DateTime fech_Inicio = DateTime.ParseExact(FechaInicio, "dd/MM/yyyy", new CultureInfo("es-PE"));
-            DateTime fech_Fin = DateTime.ParseExact(FechaFin, "dd/MM/yyyy", new CultureInfo("es-PE"));
+            DateTime fech_Inicio = DateTime.ParseExact(FechaInicio, "dd/MM/yyyy", new CultureInfo("es-CO"));
+            DateTime fech_Fin = DateTime.ParseExact(FechaFin, "dd/MM/yyyy", new CultureInfo("es-CO"));
 
             List<DetalleVenta> listaResumen = await _dbcontext.DetalleVenta
                 .Include(p => p.IdProductoNavigation)

@@ -3,6 +3,7 @@ global using SistemaVentaBlazor.Shared;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using MudBlazor;
 using MudBlazor.Services;
 using SistemaVentaBlazor.Client;
 using SistemaVentaBlazor.Client.Servicios.Implementacion;
@@ -20,7 +21,19 @@ builder.Services.AddScoped<IUsuarioService,UsuarioService>();
 builder.Services.AddScoped<IVentaService,VentaService>();
 builder.Services.AddScoped<IDashBoardService,DashBoardService>();
 
-builder.Services.AddMudServices();
+builder.Services.AddMudServices(config =>
+{
+    config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+    config.SnackbarConfiguration.PreventDuplicates = false;
+    config.SnackbarConfiguration.NewestOnTop = false;
+    config.SnackbarConfiguration.ShowCloseIcon = true;
+    config.SnackbarConfiguration.VisibleStateDuration = 5000;
+    config.SnackbarConfiguration.HideTransitionDuration = 1000;
+    config.SnackbarConfiguration.ShowTransitionDuration = 1000;
+    config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
+
 builder.Services.AddSweetAlert2();
 
 await builder.Build().RunAsync();

@@ -8,7 +8,7 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
-  <MudText Typo="Typo.h5" GutterBottom="true">Historial Venta</MudText>
+  <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
 
    <MudPaper Elevation="3" Class="pa-4" Width="100%">
 
@@ -48,23 +48,23 @@
                 >
                     <HeaderContent>
                         <MudTh>Fecha Registro</MudTh>
-                        <MudTh>Numero Venta</MudTh>
-                        <MudTh>Tipo de pago</MudTh>
-                        <MudTh>Total</MudTh>
+                        <MudTh>Numero registro</MudTh>
+                        <MudTh>Tipo de salida</MudTh>
+                        @* <MudTh>Total</MudTh> *@
                         <MudTh>Producto</MudTh>
                         <MudTh>Cantidad</MudTh>
-                        <MudTh>Precio</MudTh>
-                        <MudTh>Total por Producto</MudTh>
+                 @*        <MudTh>Precio</MudTh>
+                        <MudTh>Total por Producto</MudTh> *@
                     </HeaderContent>
                     <RowTemplate Context="ventaRow">
                         <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro</MudTd>
-                        <MudTd DataLabel="Numero Venta">@ventaRow.NumeroDocumento</MudTd>
-                        <MudTd DataLabel="Tipo de pago">@ventaRow.TipoPago</MudTd>
-                        <MudTd DataLabel="Total">@ventaRow.TotalVenta</MudTd>
+                        <MudTd DataLabel="Numero registro">@ventaRow.NumeroDocumento</MudTd>
+                        <MudTd DataLabel="Tipo de salida">@ventaRow.TipoPago</MudTd>
+                        @* <MudTd DataLabel="Total">@ventaRow.TotalVenta</MudTd> *@
                         <MudTd DataLabel="Producto">@ventaRow.Producto</MudTd>
                         <MudTd DataLabel="Cantidad">@ventaRow.Cantidad</MudTd>
-                        <MudTd DataLabel="Precio">@ventaRow.Precio</MudTd>
-                        <MudTd DataLabel="Total por Producto">@ventaRow.Total</MudTd>
+                       @*  <MudTd DataLabel="Precio">@ventaRow.Precio</MudTd>
+                        <MudTd DataLabel="Total por Producto">@ventaRow.Total</MudTd> *@
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
@@ -120,14 +120,11 @@
             {
                 IXLWorksheet hoja = libro.Worksheets.Add("ventas");
 
-                hoja.Cell(1, 1).Value = "Numero Venta";
-                hoja.Cell(1, 2).Value = "Tipo de pago";
+                hoja.Cell(1, 1).Value = "Numero Registro";
+                hoja.Cell(1, 2).Value = "Tipo de Salida";
                 hoja.Cell(1, 3).Value = "Fecha Registro";
-                hoja.Cell(1, 4).Value = "Total";
-                hoja.Cell(1, 5).Value = "Producto";
-                hoja.Cell(1, 6).Value = "Cantidad";
-                hoja.Cell(1, 7).Value = "Precio";
-                hoja.Cell(1, 8).Value = "Total por Producto";
+                hoja.Cell(1, 4).Value = "Producto";
+                hoja.Cell(1, 5).Value = "Cantidad";
  
                 hoja.Cell(2, 1).InsertData(listaVentas);
 
@@ -135,7 +132,7 @@
                 {
                     libro.SaveAs(memoria);
 
-                    var nombreExcel = string.Concat("Reporte ", DateTime.Now.ToString(), ".xlsx");
+                    var nombreExcel = string.Concat("Reporte Salidas", DateTime.Now.ToString(), ".xlsx");
                    await  _jsServicio.GenerarArchivo(nombreExcel, memoria.ToArray());
 
                 }

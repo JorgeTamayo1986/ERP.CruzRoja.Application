@@ -7,7 +7,7 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
-  <MudText Typo="Typo.h5" GutterBottom="true">Historial Venta</MudText>
+  <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
 
    <MudPaper Elevation="3" Class="pa-4" Width="100%">
 
@@ -18,10 +18,10 @@
                 ValueChanged="OnSelectedValueChanged"
             >
                 <MudSelectItem Value="@("Fechas")" />
-                <MudSelectItem Value="@("Numero Venta")" />
+                <MudSelectItem Value="@("Numero registro")" />
             </MudSelect>
 
-            <MudTextField @bind-Value="numeroVenta" Label="Numero de venta" Variant="Variant.Outlined" Margin="Margin.Dense" Class="@(noneNumero)"></MudTextField>
+            <MudTextField @bind-Value="numeroVenta" Label="Numero de registro" Variant="Variant.Outlined" Margin="Margin.Dense" Class="@(noneNumero)"></MudTextField>
            
             <MudDatePicker Label="Fecha Inicio" Margin="Margin.Dense" Variant="Variant.Outlined" Class="@(noneFecha)" @bind-Date="fechaInicio" Mask="@(new DateMask("dd/MM/yyyy"))" />
 
@@ -52,16 +52,16 @@
                 >
                     <HeaderContent>
                         <MudTh>Fecha Registro</MudTh>
-                        <MudTh>Numero Venta</MudTh>
-                        <MudTh>Tipo de pago</MudTh>
-                        <MudTh>Total</MudTh>
+                        <MudTh>Numero Registro</MudTh>
+                        <MudTh>Tipo de Salida</MudTh>
+                        @* <MudTh>Total</MudTh> *@
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate Context="ventaRow">
                         <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro.Value.ToString("dd/MM/yyyy")</MudTd>
-                        <MudTd DataLabel="Numero Venta">@ventaRow.NumeroDocumento</MudTd>
-                        <MudTd DataLabel="Tipo de pago">@ventaRow.TipoPago</MudTd>
-                        <MudTd DataLabel="Total">@ventaRow.Total</MudTd>
+                        <MudTd DataLabel="Numero Registro">@ventaRow.NumeroDocumento</MudTd>
+                        <MudTd DataLabel="Tipo de salida">@ventaRow.TipoPago</MudTd>
+                        @* <MudTd DataLabel="Total">@ventaRow.Total</MudTd> *@
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Primary" 
                                 StartIcon="@Icons.Material.Filled.RemoveRedEye"
@@ -152,6 +152,6 @@
     {
         DialogOptions maxWidth = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
         var parametros = new DialogParameters { ["_venta"] = model };
-        var dialogo = _dialogServicio.Show<MdDetalleVenta>("Detalle venta", parametros, maxWidth);
+        var dialogo = _dialogServicio.Show<MdDetalleVenta>("Detalle salida", parametros, maxWidth);
     }
 }

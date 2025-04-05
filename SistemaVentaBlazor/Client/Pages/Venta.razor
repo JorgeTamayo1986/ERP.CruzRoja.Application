@@ -23,6 +23,14 @@
             <MudItem xs="3">
                 <MudNumericField @bind-Value="_cantidad" Label="Cantidad" Variant="Variant.Outlined" Step="1" Margin="Margin.Dense" />
             </MudItem>
+
+            <MudItem xs="3">
+                <MudSelect T="string" Label="Tipo de Salida" Variant="Variant.Outlined" @bind-Value="_venta.TipoPago" Margin="Margin.Dense">
+                    <MudSelectItem Value="@("Botiquines")" />
+                    <MudSelectItem Value="@("Paleativos")" />
+                </MudSelect>
+            </MudItem>
+
             <MudItem xs="3">
                 <MudButton 
                     Variant="Variant.Filled" 
@@ -36,19 +44,14 @@
 
             <MudItem xs="6">
             </MudItem>
-            <MudItem xs="3">
-                <MudSelect T="string" Label="Tipo de Pago" Variant="Variant.Outlined" @bind-Value="_venta.TipoPago" Margin="Margin.Dense">
-                    <MudSelectItem Value="@("Efectivo")" />
-                    <MudSelectItem Value="@("Tarjeta")" />
-                </MudSelect>
-            </MudItem>
+          
 
-            <MudItem xs="3">
+           @*  <MudItem xs="3">
                 <MudAlert Severity="Severity.Warning" NoIcon="true" Variant="Variant.Filled"
                           ContentAlignment="HorizontalAlignment.Center" Dense="true" Class="mt-1">
                     Total @_venta.TotalTexto
                     </MudAlert>
-            </MudItem>
+            </MudItem> *@
 
             <MudItem xs="12">
 
@@ -56,15 +59,15 @@
                     <HeaderContent>
                         <MudTh>Producto</MudTh>
                         <MudTh>Cantidad</MudTh>
-                        <MudTh>Precio</MudTh>
-                        <MudTh>Total</MudTh>
+                        @* <MudTh>Precio</MudTh> *@
+                        @* <MudTh>Total</MudTh> *@
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate Context="dvProducto">
                         <MudTd DataLabel="Producto">@dvProducto.DescripcionProducto</MudTd>
                         <MudTd DataLabel="Cantidad">@dvProducto.Cantidad</MudTd>
-                        <MudTd DataLabel="Precio">@dvProducto.Precio</MudTd>
-                        <MudTd DataLabel="Total">@dvProducto.Total</MudTd>
+                        @* <MudTd DataLabel="Precio">@dvProducto.Precio</MudTd> *@
+                        @* <MudTd DataLabel="Total">@dvProducto.Total</MudTd> *@
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Error"
                                     StartIcon="@Icons.Material.Filled.Delete"
@@ -92,11 +95,11 @@
 
 </MudContainer>
 
-@code {
+    @code {
     private int _cantidad = 0;
     VentaDTO _venta = new VentaDTO() 
     { 
-        TipoPago = "Efectivo" ,
+            TipoPago = "Botiquines",
         DetalleVenta = new List<DetalleVentaDTO>()
     };
     private ProductoDTO _productoSeleccionado;
@@ -124,6 +127,13 @@
     {
         if(_productoSeleccionado != null && _cantidad > 0)
         {
+
+            if(_productoSeleccionado.Stock - _cantidad < 0)
+            {
+                await Swal.FireAsync("Registro de salida", $"No es posible registar la cantidad solicitada para el producto, stok disponible {_productoSeleccionado.Stock }", "warning");
+                return;
+            }
+
             var detalleVenta = new DetalleVentaDTO()
             {
                 IdProducto = _productoSeleccionado.IdProducto,
@@ -162,11 +172,11 @@
             var _ventaCreada = (VentaDTO)response.value!;
             _venta = new VentaDTO()
              {
-                 TipoPago = "Efectivo",
+                 TipoPago = "Botiquines",
                  DetalleVenta = new List<DetalleVentaDTO>()
              };
 
-            await Swal.FireAsync("Venta Registrada", $"Numero de venta: {_ventaCreada.NumeroDocumento}", "success");
+            await Swal.FireAsync("Salida Registrada", $"Numero de registro: {_ventaCreada.NumeroDocumento}", "success");
         }
         else
         {

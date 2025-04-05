@@ -73,3 +73,13 @@ cantidad int,
 precio decimal(10,2),
 total decimal(10,2)
 )
+
+
+CREATE TABLE DetalleProducto (
+    Id INT PRIMARY KEY,
+    IdProducto INT FOREIGN KEY REFERENCES Producto(idProducto),
+    NumeroLote NVARCHAR(50),
+    FechaVencimiento DATE,
+    Stock INT,
+    FechaIngreso DATETIME DEFAULT GETDATE()
+);
