@@ -11,6 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SistemaVentaBlazor.Shared",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scritps SQL", "Scritps SQL", "{61326BB2-2595-4D25-8539-5A55ED63FE31}"
 	ProjectSection(SolutionItems) = preProject
+		GenerateModel.txt = GenerateModel.txt
 		script_bd.txt = script_bd.txt
 		script_insert.txt = script_insert.txt
 	EndProjectSection

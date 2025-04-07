@@ -1,6 +1,4 @@
-﻿using SistemaVentaBlazor.Client.Servicios.Contrato;
-using SistemaVentaBlazor.Shared;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 
 namespace SistemaVentaBlazor.Client.Servicios.Implementacion
 {

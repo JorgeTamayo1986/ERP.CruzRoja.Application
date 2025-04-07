@@ -31,10 +31,10 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
 
-                Venta venta_creada = await _ventaRepositorio.Registrar(_mapper.Map<Venta>(request));
+                Salida venta_creada = await _ventaRepositorio.Registrar(_mapper.Map<Salida>(request));
                 request = _mapper.Map<VentaDTO>(venta_creada);
 
-                if (venta_creada.IdVenta != 0)
+                if (venta_creada.IdSalida != 0)
                     _ResponseDTO = new ResponseDTO<VentaDTO>() { status = true, msg = "ok", value = request };
                 else
                     _ResponseDTO = new ResponseDTO<VentaDTO>() { status = false, msg = "No se pudo registrar la venta" };

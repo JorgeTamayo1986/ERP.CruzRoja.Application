@@ -2,51 +2,56 @@
 
 @inject IProductoService _productoServicio;
 @inject IVentaService _ventaServicio;
+@inject ITipoSalidaService _tipoSalidaServicio;
 @inject ISnackbar _snackBar
 @inject SweetAlertService Swal;
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
-    <MudText Typo="Typo.h5" GutterBottom="true">Nueva Venta</MudText>
+    <MudText Typo="Typo.h5" GutterBottom="true">Nueva Salida</MudText>
 
     <MudPaper Elevation="3" Class="pa-4" Width="100%">
         <MudGrid>
             <MudItem xs="6">
 
                 <MudAutocomplete T="ProductoDTO" Label="Buscar producto" @bind-Value="_productoSeleccionado" SearchFunc="@BuscarProducto"
-                                 ResetValueOnEmptyText="true"
-                                 AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
-                                 Variant="Variant.Outlined" Margin="Margin.Dense" 
-                                 ToStringFunc="@(e => e == null ? null : $"{e.Nombre} - {e.DescripcionCategoria}")"
-                                 />
+                ResetValueOnEmptyText="true"
+                AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
+                Variant="Variant.Outlined" Margin="Margin.Dense" 
+                ToStringFunc="@(e => e == null ? null : $"{e.Nombre} - {e.DescripcionCategoria}")"
+                />
             </MudItem>
             <MudItem xs="3">
                 <MudNumericField @bind-Value="_cantidad" Label="Cantidad" Variant="Variant.Outlined" Step="1" Margin="Margin.Dense" />
             </MudItem>
 
-            <MudItem xs="3">
-                <MudSelect T="string" Label="Tipo de Salida" Variant="Variant.Outlined" @bind-Value="_venta.TipoPago" Margin="Margin.Dense">
-                    <MudSelectItem Value="@("Botiquines")" />
-                    <MudSelectItem Value="@("Paleativos")" />
-                </MudSelect>
-            </MudItem>
+            <MudSelect Label="Tipo Salida" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" Class="mb-3"
+            @bind-Value="tipoSeleccionado">
+                @if (listaTipo.Any())
+                {
+                    foreach (var tipo in listaTipo)
+                    {
+                        <MudSelectItem Value="@tipo">@tipo.Descripcion</MudSelectItem>
+                    }
+                }
+            </MudSelect>
 
             <MudItem xs="3">
                 <MudButton 
-                    Variant="Variant.Filled" 
-                    StartIcon="@Icons.Material.Filled.Add" 
-                    Color="Color.Info"
-                    FullWidth="true"
-                    Class="mt-1"
-                    OnClick="AgregarProducto"
+                Variant="Variant.Filled" 
+                StartIcon="@Icons.Material.Filled.Add" 
+                Color="Color.Info"
+                FullWidth="true"
+                Class="mt-1"
+                OnClick="AgregarProducto"
                 >Agregar</MudButton>
             </MudItem>
 
             <MudItem xs="6">
             </MudItem>
-          
 
-           @*  <MudItem xs="3">
+
+            @*  <MudItem xs="3">
                 <MudAlert Severity="Severity.Warning" NoIcon="true" Variant="Variant.Filled"
                           ContentAlignment="HorizontalAlignment.Center" Dense="true" Class="mt-1">
                     Total @_venta.TotalTexto
@@ -59,21 +64,19 @@
                     <HeaderContent>
                         <MudTh>Producto</MudTh>
                         <MudTh>Cantidad</MudTh>
-                        @* <MudTh>Precio</MudTh> *@
-                        @* <MudTh>Total</MudTh> *@
+                        <MudTh>Tipo Salida</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate Context="dvProducto">
                         <MudTd DataLabel="Producto">@dvProducto.DescripcionProducto</MudTd>
                         <MudTd DataLabel="Cantidad">@dvProducto.Cantidad</MudTd>
-                        @* <MudTd DataLabel="Precio">@dvProducto.Precio</MudTd> *@
-                        @* <MudTd DataLabel="Total">@dvProducto.Total</MudTd> *@
+                        <MudTd DataLabel="Tipo Salida">@dvProducto.DescripcionSalida</MudTd>
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Error"
-                                    StartIcon="@Icons.Material.Filled.Delete"
-                                    Size="Size.Small"
-                                    IconSize="Size.Small"
-                                    OnClick="@(() => EliminarProducto(dvProducto.IdProducto))" />
+                            StartIcon="@Icons.Material.Filled.Delete"
+                            Size="Size.Small"
+                            IconSize="Size.Small"
+                            OnClick="@(() => EliminarProducto(dvProducto.IdProducto))" />
                         </MudTd>
                     </RowTemplate>
                 </MudTable>
@@ -82,12 +85,12 @@
 
             <MudItem xs="3" Class="align-self-end">
                 <MudButton Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.Save"
-                           Color="Color.Primary"
-                           FullWidth="true"
-                           Class="mt-1"
-                           OnClick="RegistrarVenta"
-                           Disabled="@botonDesactivado">Registrar</MudButton>
+                StartIcon="@Icons.Material.Filled.Save"
+                Color="Color.Primary"
+                FullWidth="true"
+                Class="mt-1"
+                OnClick="RegistrarVenta"
+                Disabled="@botonDesactivado">Registrar</MudButton>
             </MudItem>
 
         </MudGrid>
@@ -95,15 +98,28 @@
 
 </MudContainer>
 
-    @code {
+@code {
     private int _cantidad = 0;
+    List<TipoSalidaDTO> listaTipo = new List<TipoSalidaDTO>();
+    public TipoSalidaDTO tipoSeleccionado = new();
+
     VentaDTO _venta = new VentaDTO() 
     { 
-            TipoPago = "Botiquines",
         DetalleVenta = new List<DetalleVentaDTO>()
     };
+
     private ProductoDTO _productoSeleccionado;
     private bool botonDesactivado = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var resultado = await _tipoSalidaServicio.Lista();
+        if (resultado.status)
+        {
+            listaTipo = resultado.value!;
+            tipoSeleccionado = listaTipo.First();
+        }
+    }
 
     private async Task<IEnumerable<ProductoDTO>> BuscarProducto(string valor){
 
@@ -139,16 +155,14 @@
                 IdProducto = _productoSeleccionado.IdProducto,
                 DescripcionProducto = _productoSeleccionado.Nombre,
                 Cantidad = _cantidad,
-                Precio = _productoSeleccionado.Precio,
-                Total = _cantidad  * _productoSeleccionado.Precio
+                DescripcionSalida = tipoSeleccionado.Descripcion
             };
+            _venta.TipoSalida = tipoSeleccionado.IdTipo;
             _venta.DetalleVenta!.Add(detalleVenta);
 
             _productoSeleccionado = null;
             _cantidad = 0;
         }
-
-
     }
 
 
@@ -162,7 +176,6 @@
     {
         botonDesactivado = true;
 
-        _venta.Total = _venta.DetalleVenta!.Sum(p => p.Total);
         _venta.FechaRegistro = DateTime.Now;
 
         var response = await _ventaServicio.Registrar(_venta);
@@ -172,7 +185,7 @@
             var _ventaCreada = (VentaDTO)response.value!;
             _venta = new VentaDTO()
              {
-                 TipoPago = "Botiquines",
+                 TipoSalida = tipoSeleccionado.IdTipo,
                  DetalleVenta = new List<DetalleVentaDTO>()
              };
 

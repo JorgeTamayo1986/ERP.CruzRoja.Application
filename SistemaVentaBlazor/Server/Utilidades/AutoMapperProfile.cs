@@ -37,76 +37,68 @@ namespace SistemaVentaBlazor.Server.Utilidades
             CreateMap<Categoria, CategoriaDTO>().ReverseMap();
             #endregion Categoria
 
+            #region TipoSalida
+            CreateMap<TipoSalida, TipoSalidaDTO>().ReverseMap();
+            #endregion TipoSalida
+
             #region Producto
             CreateMap<Producto, ProductoDTO>()
             .ForMember(destino =>
                 destino.DescripcionCategoria,
                 opt => opt.MapFrom(origen => origen.IdCategoriaNavigation.Descripcion)
+            )
+             .ForMember(destino =>
+                destino.Stock,
+                opt => opt.MapFrom(origen => origen.DetalleProducto.FirstOrDefault().Stock)
+            )
+             .ForMember(destino =>
+                destino.FechaVencimiento,
+                opt => opt.MapFrom(origen => origen.DetalleProducto.FirstOrDefault().FechaVencimiento)
             );
-            //.ForMember(destino =>
-            //    destino.Precio,
-            //    opt => opt.MapFrom(origen => Convert.ToString(origen.Precio.Value, new CultureInfo("es-PE")))
-            //);
+ 
 
             CreateMap<ProductoDTO, Producto>()
             .ForMember(destino =>
                 destino.IdCategoriaNavigation,
                 opt => opt.Ignore()
             );
-            //.ForMember(destiono =>
-            //    destiono.Precio,
-            //    opt => opt.MapFrom(origen => Convert.ToDecimal(origen.Precio, new CultureInfo("es-PE")))
-            //);
+
+            CreateMap<DetalleProducto, ProductoDTO>()
+           .ForMember(destino =>
+               destino.FechaVencimiento,
+               opt => opt.MapFrom(origen => origen.FechaVencimiento)
+           )
+           .ForMember(destino =>
+               destino.Stock,
+               opt => opt.MapFrom(origen => origen.Stock)
+           ); ;
+
             #endregion Producto
 
-            #region Venta
-            CreateMap<Venta, VentaDTO>();
-            //CreateMap<Venta, VentaDTO>()
-            //    .ForMember(destino =>
-            //        destino.TotalTexto,
-            //        opt => opt.MapFrom(origen => Convert.ToString(origen.Total.Value, new CultureInfo("es-PE")))
-            //    ).ForMember(destino =>
-            //        destino.FechaRegistro,
-            //        opt => opt.MapFrom(origen => origen.FechaRegistro.Value.ToString("dd/MM/yyyy"))
-            //    );
-            CreateMap<VentaDTO, Venta>();
-            //CreateMap<VentaDTO, Venta>()
-            //    .ForMember(destino =>
-            //        destino.Total,
-            //        opt => opt.MapFrom(origen => Convert.ToDecimal(origen.TotalTexto, new CultureInfo("es-PE")))
-            //    );
+            #region Salida
+            CreateMap<Salida, VentaDTO>();
 
-            #endregion Venta
+            CreateMap<VentaDTO, Salida>();
 
-            #region DetalleVenta
-            CreateMap<DetalleVenta, DetalleVentaDTO>()
+          
+
+
+            #endregion Salida
+
+            #region DetalleSalida
+
+            CreateMap<DetalleSalida, DetalleVentaDTO>()
                 .ForMember(destino =>
                     destino.DescripcionProducto,
                     opt => opt.MapFrom(origen => origen.IdProductoNavigation.Nombre)
                 );
-            //.ForMember(destino =>
-            //    destino.PrecioTexto,
-            //    opt => opt.MapFrom(origen => Convert.ToString(origen.Precio.Value, new CultureInfo("es-PE")))
-            //)
-            //.ForMember(destino =>
-            //    destino.TotalTexto,
-            //    opt => opt.MapFrom(origen => Convert.ToString(origen.Total.Value, new CultureInfo("es-PE")))
-            //);
-            CreateMap<DetalleVentaDTO, DetalleVenta>();
 
-            //CreateMap<DetalleVentaDTO, DetalleVenta>()
-            //    .ForMember(destino =>
-            //        destino.Precio,
-            //        opt => opt.MapFrom(origen => Convert.ToDecimal(origen.PrecioTexto, new CultureInfo("es-PE")))
-            //    )
-            //    .ForMember(destino =>
-            //        destino.Total,
-            //        opt => opt.MapFrom(origen => Convert.ToDecimal(origen.TotalTexto, new CultureInfo("es-PE")))
-            //    );
+            CreateMap<DetalleVentaDTO, DetalleSalida>();
+
             #endregion
 
             #region Reporte
-            CreateMap<DetalleVenta, ReporteDTO>()
+            CreateMap<DetalleSalida, ReporteDTO>()
                 .ForMember(destino =>
                     destino.FechaRegistro,
                     opt => opt.MapFrom(origen => origen.IdVentaNavigation.FechaRegistro.Value.ToString("dd/MM/yyyy"))
@@ -117,23 +109,11 @@ namespace SistemaVentaBlazor.Server.Utilidades
                 )
                 .ForMember(destino =>
                     destino.TipoPago,
-                    opt => opt.MapFrom(origen => origen.IdVentaNavigation.TipoPago)
-                )
-                .ForMember(destino =>
-                    destino.TotalVenta,
-                    opt => opt.MapFrom(origen => Convert.ToString(origen.IdVentaNavigation.Total.Value, new CultureInfo("es-PE")))
+                    opt => opt.MapFrom(origen => origen.IdVentaNavigation.TipoSalida)
                 )
                 .ForMember(destino =>
                     destino.Producto,
                     opt => opt.MapFrom(origen => origen.IdProductoNavigation.Nombre)
-                )
-                .ForMember(destino =>
-                    destino.Precio,
-                    opt => opt.MapFrom(origen => Convert.ToString(origen.Precio.Value, new CultureInfo("es-PE")))
-                )
-                .ForMember(destino =>
-                    destino.Total,
-                    opt => opt.MapFrom(origen => Convert.ToString(origen.Total.Value, new CultureInfo("es-PE")))
                 );
             #endregion Reporte
         }

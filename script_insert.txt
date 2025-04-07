@@ -2,44 +2,83 @@
 --INSERTAR ROLES
 insert into rol(descripcion,esActivo) values
 ('Administrador',1),
-('Empleado',1)
+('Auxiliar',1)
 
 go
 
 --INSERTAR USUARIOS
 insert into usuario(nombreApellidos,correo,idRol,Clave,esActivo) values
-('jose smith','admin@example.com',1,'12345',1),
-('luis smith','employe@example.com',2,'12345',1)
+('Miguel Felipe Salazar','admin@gmail.com',1,'12345',1),
+('Jorge Tamayo','jetr@gmamail.com',2,'12345',1)
 
 go
 --INSERTAR CATEGORIAS
-insert into Categoria(descripcion,esActivo) values ('Laptops',1)
-insert into Categoria(descripcion,esActivo) values ('Monitores',1)
-insert into Categoria(descripcion,esActivo) values ('Teclados',1)
-insert into Categoria(descripcion,esActivo) values ('Auriculares',1)
-insert into Categoria(descripcion,esActivo) values ('Memorias',1)
-insert into Categoria(descripcion,esActivo) values ('Accesorios',1)
 
+insert into Categoria(descripcion,esActivo) values ('Medicamentos y productos farmacéuticos',1)
+insert into Categoria(descripcion,esActivo) values ('Material de sutura',1)
+insert into Categoria(descripcion,esActivo) values ('Insumos médicos desechables',1)
+insert into Categoria(descripcion,esActivo) values ('Insumos para procedimientos quirúrgicos',1)
+insert into Categoria(descripcion,esActivo) values ('Insumos para administración de medicamentos',1)
+insert into Categoria(descripcion,esActivo) values ('Insumos para curación y cuidado de heridas',1)
+insert into Categoria(descripcion,esActivo) values ('Productos higiénicos',1)
+insert into Categoria(descripcion,esActivo) values ('Equipo de Protección Personal (EPP)',1)
+insert into Categoria(descripcion,esActivo) values ('Equipo Médico',1)
 go
+
+
+insert into TipoSalida(descripcion,esActivo) values ('Botiquin',1)
+insert into TipoSalida(descripcion,esActivo) values ('Cuidados Paliativos',1)
+go
+
 
 --INSERTAR PRODUCTOS
 
-insert into Producto(nombre,idCategoria,stock,precio,esActivo) values
-('laptop samsung book pro',1,20,2500,1),
-('laptop lenovo idea pad',1,30,2200,1),
-('laptop asus zenbook duo',1,30,2100,1),
-('monitor teros gaming te-2',2,25,1050,1),
-('monitor samsung curvo',2,15,1400,1),
-('monitor huawei gamer',2,10,1350,1),
-('teclado seisen gamer',3,10,800,1),
-('teclado antryx gamer',3,10,1000,1),
-('teclado logitech',3,10,1000,1),
-('auricular logitech gamer',4,15,800,1),
-('auricular hyperx gamer',4,20,680,1),
-('auricular redragon rgb',4,25,950,1),
-('memoria kingston rgb',5,10,200,1),
-('ventilador cooler master',6,20,200,1),
-('mini ventilador lenono',6,15,200,1)
+insert into Producto(nombre,idCategoria,esActivo) values
+('Acetaminofen 500MG',1,1),
+('Polipropileno  prodek 5/0 Aguja cortante',2,1),
+('K95 Niño  Blanco',3,1),
+('K95 Adulto Blanco',3,1),
+('Baja Lenguas',3,1),
+('Guantes Estériles',3,1),
+('Aguja Hipodermica',5,1),
+('Jeringa Punta Cateter',5,1),
+('Jeringa Insulina',5,1),
+('Alcohol Antisético 350Ml',6,1),
+('Alcohol Antisético 1000Ml',6,1),
+('Curas Redondas',6,1),
+('Gase estéril no tejida',6,1),
+('Venda algodon',6,1),
+('Venda elástica',6,1),
+('Gafas de protección',8,1),
+('Gase estéril no tejida',6,1),
+('Tensiometro digital',9,1),
+('Tensiometro Manual',9,1),
+('Termómetro digital',9,1)
+
+go
+
+
+insert into DetalleProducto(ProductoId,FechaVencimiento,Stock) values
+(1,'12/31/2025',50),
+(2,'12/31/2025',50),
+(3,'12/31/2025',50),
+(4,'12/31/2025',50),
+(5,'12/31/2025',50),
+(6,'12/31/2025',50),
+(7,'12/31/2025',50),
+(8,'12/31/2025',50),
+(9,'12/31/2025',50),
+(10,'12/31/2025',50),
+(11,'12/31/2025',50),
+(12,'12/31/2025',50),
+(13,'12/31/2025',50),
+(14,'12/31/2025',50),
+(15,'12/31/2025',50),
+(16,'12/31/2025',50),
+(17,'12/31/2025',50),
+(18,'12/31/2025',50),
+(19,'12/31/2025',50),
+(20,'12/31/2025',50)
 
 go
 

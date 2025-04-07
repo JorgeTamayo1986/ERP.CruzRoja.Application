@@ -8,15 +8,15 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
     public class VentaRepositorio : IVentaRepositorio
     {
 
-        private readonly DbventaBlazorContext _dbcontext;
-        public VentaRepositorio(DbventaBlazorContext context)
+        private readonly InventarioContext _dbcontext;
+        public VentaRepositorio(InventarioContext context)
         {
             _dbcontext = context;
         }
 
-        public async Task<Venta> Registrar(Venta entidad)
+        public async Task<Salida> Registrar(Salida entidad)
         {
-            Venta VentaGenerada = new Venta();
+            Salida VentaGenerada = new Salida();
 
             //usaremos transacion, ya que si ocurre un error en algun insert a una tabla, debe reestablecer todo a cero, como si no hubo o no existió ningun insert
             using (var transaction = _dbcontext.Database.BeginTransaction())
@@ -24,22 +24,22 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
                 int CantidadDigitos = 4;
                 try
                 {
-                    foreach (DetalleVenta dv in entidad.DetalleVenta)
+                    foreach (DetalleSalida dv in entidad.DetalleSalida)
                     {
-                        Producto producto_encontrado = _dbcontext.Productos.Where(p => p.IdProducto == dv.IdProducto).First();
+                        DetalleProducto producto_encontrado = _dbcontext.DetalleProducto.Where(p => p.Id == dv.IdProducto).First();
 
                         producto_encontrado.Stock = producto_encontrado.Stock - dv.Cantidad;
-                        _dbcontext.Productos.Update(producto_encontrado);
+                        _dbcontext.DetalleProducto.Update(producto_encontrado);
                     }
                     await _dbcontext.SaveChangesAsync();
 
 
-                    NumeroDocumento correlativo = _dbcontext.NumeroDocumentos.First();
+                    NumeroDocumento correlativo = _dbcontext.NumeroDocumento.First();
 
                     correlativo.UltimoNumero = correlativo.UltimoNumero + 1;
                     correlativo.FechaRegistro = DateTime.Now;
 
-                    _dbcontext.NumeroDocumentos.Update(correlativo);
+                    _dbcontext.NumeroDocumento.Update(correlativo);
                     await _dbcontext.SaveChangesAsync();
 
 
@@ -49,7 +49,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 
                     entidad.NumeroDocumento = numeroVenta;
 
-                    await _dbcontext.Venta.AddAsync(entidad);
+                    await _dbcontext.Salida.AddAsync(entidad);
                     await _dbcontext.SaveChangesAsync();
 
                     VentaGenerada = entidad;
@@ -66,9 +66,9 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
             return VentaGenerada;
         }
 
-        public async Task<List<Venta>> Historial(string buscarPor, string numeroVenta, string fechaInicio, string fechaFin)
+        public async Task<List<Salida>> Historial(string buscarPor, string numeroVenta, string fechaInicio, string fechaFin)
         {
-            IQueryable<Venta> query = _dbcontext.Venta;
+            IQueryable<Salida> query = _dbcontext.Salida;
 
             if (buscarPor == "fecha")
             {
@@ -80,7 +80,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
                     v.FechaRegistro.Value.Date >= fech_Inicio.Date &&
                     v.FechaRegistro.Value.Date <= fech_Fin.Date
                 )
-                .Include(dv => dv.DetalleVenta)
+                .Include(dv => dv.DetalleSalida)
                 .ThenInclude(p => p.IdProductoNavigation)
                 .ToList();
 
@@ -88,7 +88,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
             else
             {
                 return query.Where(v => v.NumeroDocumento == numeroVenta)
-                  .Include(dv => dv.DetalleVenta)
+                  .Include(dv => dv.DetalleSalida)
                   .ThenInclude(p => p.IdProductoNavigation)
                   .ToList();
             }
@@ -96,13 +96,13 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 
         }
 
-        public async Task<List<DetalleVenta>> Reporte(string FechaInicio, string FechaFin)
+        public async Task<List<DetalleSalida>> Reporte(string FechaInicio, string FechaFin)
         {
 
             DateTime fech_Inicio = DateTime.ParseExact(FechaInicio, "dd/MM/yyyy", new CultureInfo("es-CO"));
             DateTime fech_Fin = DateTime.ParseExact(FechaFin, "dd/MM/yyyy", new CultureInfo("es-CO"));
 
-            List<DetalleVenta> listaResumen = await _dbcontext.DetalleVenta
+            List<DetalleSalida> listaResumen = await _dbcontext.DetalleSalida
                 .Include(p => p.IdProductoNavigation)
                 .Include(v => v.IdVentaNavigation)
                 .Where(dv => dv.IdVentaNavigation.FechaRegistro.Value.Date >= fech_Inicio.Date && dv.IdVentaNavigation.FechaRegistro.Value.Date <= fech_Fin.Date)

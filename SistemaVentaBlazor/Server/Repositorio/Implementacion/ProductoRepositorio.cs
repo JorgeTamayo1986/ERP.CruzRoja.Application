@@ -7,15 +7,17 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 {
     public class ProductoRepositorio : IProductoRepositorio
     {
-        private readonly DbventaBlazorContext _dbContext;
+        private readonly InventarioContext _dbContext;
 
-        public ProductoRepositorio(DbventaBlazorContext dbContext)
+        public ProductoRepositorio(InventarioContext dbContext)
         {
             _dbContext = dbContext;
         }
         public async Task<IQueryable<Producto>> Consultar(Expression<Func<Producto, bool>> filtro = null)
         {
-            IQueryable<Producto> queryEntidad = filtro == null ? _dbContext.Productos : _dbContext.Productos.Where(filtro);
+            IQueryable<Producto> queryEntidad = filtro == null ? _dbContext.Producto.Include(f => f.DetalleProducto): _dbContext.Producto.Where(filtro);
+
+
             return queryEntidad;
         }
 
@@ -51,7 +53,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                _dbContext.Remove(entidad);
+                _dbContext.Update(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
@@ -65,7 +67,20 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Productos.Where(filtro).FirstOrDefaultAsync();
+                var producto = await _dbContext.Producto.Include(f => f.DetalleProducto).Where(filtro).FirstOrDefaultAsync();
+                return producto;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+
+        public async Task<DetalleProducto> ObtenerDetalle(Expression<Func<DetalleProducto, bool>> filtro = null)
+        {
+            try
+            {
+                return await _dbContext.DetalleProducto.Where(filtro).FirstOrDefaultAsync();
             }
             catch
             {

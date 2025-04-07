@@ -27,8 +27,11 @@
                 <MudNumericField @bind-Value="@_producto.Stock" Class="mb-3"
                               Label="Stock" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.QrCode" />
 
-                <MudNumericField @bind-Value="@_producto.Precio" Class="mb-3"
-                              Label="Precio" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Money" />
+                    <MudDatePicker Label="Fecha Vencimiento" Margin="Margin.Dense" Variant="Variant.Outlined" @bind-Date="_producto.FechaVencimiento"
+                               PickerVariant="PickerVariant.Dialog"
+                               OpenTo="OpenTo.Date"
+                               CloseOnOutsideClick="true"
+                               Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.EditCalendar" />
 
             </EditForm>
 

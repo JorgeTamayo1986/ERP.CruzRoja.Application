@@ -4,19 +4,18 @@ using SistemaVentaBlazor.Server.Repositorio.Contrato;
 
 namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 {
-    public class RolRepositorio : IRolRepositorio
+    public class TipoSalidaRepositorio : ITipoSalidaRepoitorio
     {
-        private readonly InventarioContext _dbContext;
-
-        public RolRepositorio(InventarioContext dbContext)
+        private readonly InventarioContext _context;
+        public TipoSalidaRepositorio(InventarioContext context)
         {
-            _dbContext = dbContext;
+            _context = context;
         }
-        public async Task<List<Rol>> Lista()
+        public async Task<List<TipoSalida>> Lista()
         {
             try
             {
-                return await _dbContext.Rol.ToListAsync();
+                return await _context.TipoSalida.ToListAsync();
             }
             catch
             {

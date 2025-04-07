@@ -7,16 +7,16 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 {
     public class UsuarioRepositorio : IUsuarioRepositorio
     {
-        private readonly DbventaBlazorContext _dbContext;
+        private readonly InventarioContext _dbContext;
 
-        public UsuarioRepositorio(DbventaBlazorContext dbContext)
+        public UsuarioRepositorio(InventarioContext dbContext)
         {
             _dbContext = dbContext;
         }
 
         public async Task<IQueryable<Usuario>> Consultar(Expression<Func<Usuario, bool>> filtro = null)
         {
-            IQueryable<Usuario> queryEntidad = filtro == null ? _dbContext.Usuarios : _dbContext.Usuarios.Where(filtro);
+            IQueryable<Usuario> queryEntidad = filtro == null ? _dbContext.Usuario : _dbContext.Usuario.Where(filtro);
             return queryEntidad;
         }
 
@@ -66,7 +66,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Usuarios.ToListAsync();
+                return await _dbContext.Usuario.ToListAsync();
             }
             catch
             {
@@ -78,7 +78,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Usuarios.Where(filtro).FirstOrDefaultAsync();
+                return await _dbContext.Usuario.Where(filtro).FirstOrDefaultAsync();
             }
             catch
             {

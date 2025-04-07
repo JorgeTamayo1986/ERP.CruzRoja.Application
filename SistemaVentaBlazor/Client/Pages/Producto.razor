@@ -32,14 +32,14 @@
                         <MudTh>Nombre</MudTh>
                         <MudTh>Categoria</MudTh>
                         <MudTh>Stock</MudTh>
-                        <MudTh>Precio</MudTh>
+                        <MudTh>Fecha Vencimiento</MudTh>
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate Context="productoRow">
                         <MudTd DataLabel="Nombre">@productoRow.Nombre</MudTd>
                         <MudTd DataLabel="Correo">@productoRow.DescripcionCategoria</MudTd>
                         <MudTd DataLabel="Rol">@productoRow.Stock</MudTd>
-                        <MudTd DataLabel="Precio">@productoRow.Precio</MudTd>
+                        <MudTd DataLabel="Fecha Vencimiento">@productoRow.FechaVencimiento?.ToString("dd/MM/yyyy")</MudTd>
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Primary"
                                     StartIcon="@Icons.Material.Filled.Edit"

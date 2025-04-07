@@ -1,0 +1,1 @@
+dotnet ef dbcontext scaffold "Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=InventarioCRCDB;Integrated Security=True;" Microsoft.EntityFrameworkCore.SqlServer --context InventarioContext --output-dir Models --context-dir Models --no-onconfiguring --no-pluralize -f

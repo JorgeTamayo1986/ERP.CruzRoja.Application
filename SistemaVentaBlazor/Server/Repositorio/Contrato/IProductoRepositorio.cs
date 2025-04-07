@@ -6,6 +6,8 @@ namespace SistemaVentaBlazor.Server.Repositorio.Contrato
     public interface IProductoRepositorio
     {
         Task<Producto> Obtener(Expression<Func<Producto, bool>> filtro = null);
+
+        Task<DetalleProducto> ObtenerDetalle(Expression<Func<DetalleProducto, bool>> filtro = null);
         Task<Producto> Crear(Producto entidad);
         Task<bool> Editar(Producto entidad);
         Task<bool> Eliminar(Producto entidad);

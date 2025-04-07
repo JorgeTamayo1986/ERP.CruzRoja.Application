@@ -34,7 +34,9 @@ namespace SistemaVentaBlazor.Server.Controllers
                 IQueryable<Producto> query = await _productoRepositorio.Consultar();
                 query = query.Include(r => r.IdCategoriaNavigation);
 
-                ListaProductos = _mapper.Map<List<ProductoDTO>>(query.ToList());
+                var producto = await query.ToListAsync();
+
+                ListaProductos = _mapper.Map<List<ProductoDTO>>(producto);
 
                 if (ListaProductos.Count > 0)
                     _ResponseDTO = new ResponseDTO<List<ProductoDTO>>() { status = true, msg = "ok", value = ListaProductos };
@@ -60,9 +62,11 @@ namespace SistemaVentaBlazor.Server.Controllers
             {
                 Producto _producto = _mapper.Map<Producto>(request);
 
+                _producto.DetalleProducto.Add(_mapper.Map<DetalleProducto>(request));
+
                 Producto _productoCreado = await _productoRepositorio.Crear(_producto);
 
-                if (_productoCreado.IdProducto != 0)
+                if (_productoCreado.Id != 0)
                     _ResponseDTO = new ResponseDTO<ProductoDTO>() { status = true, msg = "ok", value = _mapper.Map<ProductoDTO>(_productoCreado) };
                 else
                     _ResponseDTO = new ResponseDTO<ProductoDTO>() { status = false, msg = "No se pudo crear el producto" };
@@ -84,15 +88,20 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
                 Producto _producto = _mapper.Map<Producto>(request);
-                Producto _productoParaEditar = await _productoRepositorio.Obtener(u => u.IdProducto == _producto.IdProducto);
+                Producto _productoParaEditar = await _productoRepositorio.Obtener(u => u.Id == _producto.Id);
+
+                DetalleProducto _detalleproducto = await _productoRepositorio.ObtenerDetalle(u => u.ProductoId == _producto.Id);
+
 
                 if (_productoParaEditar != null)
                 {
 
                     _productoParaEditar.Nombre = _producto.Nombre;
                     _productoParaEditar.IdCategoria = _producto.IdCategoria;
-                    _productoParaEditar.Stock = _producto.Stock;
-                    _productoParaEditar.Precio = _producto.Precio;
+                    _detalleproducto.Stock = request.Stock;
+                    _detalleproducto.FechaVencimiento = request.FechaVencimiento;
+                    _productoParaEditar.DetalleProducto.Add(_detalleproducto);
+
 
                     bool respuesta = await _productoRepositorio.Editar(_productoParaEditar);
 
@@ -124,11 +133,11 @@ namespace SistemaVentaBlazor.Server.Controllers
             ResponseDTO<string> _ResponseDTO = new ResponseDTO<string>();
             try
             {
-                Producto _productoEliminar = await _productoRepositorio.Obtener(u => u.IdProducto == id);
+                Producto _productoEliminar = await _productoRepositorio.Obtener(u => u.Id == id);
 
                 if (_productoEliminar != null)
                 {
-
+                    _productoEliminar.EsActivo = false;
                     bool respuesta = await _productoRepositorio.Eliminar(_productoEliminar);
 
                     if (respuesta)

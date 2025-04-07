@@ -8,7 +8,7 @@
 
     <DataAnnotationsValidator></DataAnnotationsValidator>
 
-    <MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">Bienvenido</MudText>
+    @* <MudText Typo="Typo.h4" GutterBottom="true" Align="Align.Center">Bienvenido</MudText> *@
 
 
     <MudTextField 
@@ -73,7 +73,7 @@
         var result = await _usuarioServicio.IniciarSesion(usuarioLogin);
 
         if (result.status)
-            _navigationManager.NavigateTo("/page/dashboard");
+            _navigationManager.NavigateTo("/page/producto");
         else
         {
             myImageClass = "d-none";

@@ -13,5 +13,5 @@ public partial class Rol
 
     public DateTime? FechaRegistro { get; set; }
 
-    public virtual ICollection<Usuario> Usuarios { get; } = new List<Usuario>();
+    public virtual ICollection<Usuario> Usuario { get; } = new List<Usuario>();
 }

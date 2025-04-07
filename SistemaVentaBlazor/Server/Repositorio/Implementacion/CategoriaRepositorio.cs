@@ -6,9 +6,9 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
 {
     public class CategoriaRepositorio : ICategoriaRepositorio
     {
-        private readonly DbventaBlazorContext _dbContext;
+        private readonly InventarioContext _dbContext;
 
-        public CategoriaRepositorio(DbventaBlazorContext dbContext)
+        public CategoriaRepositorio(InventarioContext dbContext)
         {
             _dbContext = dbContext;
         }

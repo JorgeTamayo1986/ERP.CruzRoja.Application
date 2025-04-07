@@ -13,5 +13,5 @@ public partial class Categoria
 
     public DateTime? FechaRegistro { get; set; }
 
-    public virtual ICollection<Producto> Productos { get; } = new List<Producto>();
+    public virtual ICollection<Producto> Producto { get; } = new List<Producto>();
 }
