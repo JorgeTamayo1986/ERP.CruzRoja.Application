@@ -63,20 +63,25 @@ public partial class InventarioContext : DbContext
 
         modelBuilder.Entity<DetalleSalida>(entity =>
         {
-            entity.HasKey(e => e.IdDetalleVenta).HasName("PK__DetalleS__BFE2843FD3FADE84");
+            entity.HasKey(e => e.IdDetalleVenta).HasName("PK__DetalleS__BFE2843FE65C5768");
 
             entity.Property(e => e.IdDetalleVenta).HasColumnName("idDetalleVenta");
             entity.Property(e => e.Cantidad).HasColumnName("cantidad");
             entity.Property(e => e.IdProducto).HasColumnName("idProducto");
             entity.Property(e => e.IdVenta).HasColumnName("idVenta");
+            entity.Property(e => e.TipoSalida).HasColumnName("tipoSalida");
 
             entity.HasOne(d => d.IdProductoNavigation).WithMany(p => p.DetalleSalida)
                 .HasForeignKey(d => d.IdProducto)
-                .HasConstraintName("FK__DetalleSa__idPro__59063A47");
+                .HasConstraintName("FK__DetalleSa__idPro__60A75C0F");
 
             entity.HasOne(d => d.IdVentaNavigation).WithMany(p => p.DetalleSalida)
                 .HasForeignKey(d => d.IdVenta)
-                .HasConstraintName("FK__DetalleSa__idVen__5812160E");
+                .HasConstraintName("FK__DetalleSa__idVen__5FB337D6");
+
+            entity.HasOne(d => d.TipoSalidaNavigation).WithMany(p => p.DetalleSalida)
+                .HasForeignKey(d => d.TipoSalida)
+                .HasConstraintName("FK__DetalleSa__tipoS__619B8048");
         });
 
         modelBuilder.Entity<NumeroDocumento>(entity =>
@@ -126,7 +131,7 @@ public partial class InventarioContext : DbContext
 
         modelBuilder.Entity<Salida>(entity =>
         {
-            entity.HasKey(e => e.IdSalida).HasName("PK__Salida__BBE6FB5DEA5C0A9E");
+            entity.HasKey(e => e.IdSalida).HasName("PK__Salida__BBE6FB5DF5BBBAC9");
 
             entity.Property(e => e.IdSalida).HasColumnName("idSalida");
             entity.Property(e => e.FechaRegistro)
@@ -137,11 +142,6 @@ public partial class InventarioContext : DbContext
                 .HasMaxLength(40)
                 .IsUnicode(false)
                 .HasColumnName("numeroDocumento");
-            entity.Property(e => e.TipoSalida).HasColumnName("tipoSalida");
-
-            entity.HasOne(d => d.TipoSalidaNavigation).WithMany(p => p.Salida)
-                .HasForeignKey(d => d.TipoSalida)
-                .HasConstraintName("FK__Salida__tipoSali__5070F446");
         });
 
         modelBuilder.Entity<TipoSalida>(entity =>

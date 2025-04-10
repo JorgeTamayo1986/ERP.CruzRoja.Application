@@ -31,7 +31,7 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
                 List<ProductoDTO> ListaProductos = new List<ProductoDTO>();
-                IQueryable<Producto> query = await _productoRepositorio.Consultar();
+                IQueryable<Producto> query = await _productoRepositorio.Consultar(f => f.EsActivo == true);
                 query = query.Include(r => r.IdCategoriaNavigation);
 
                 var producto = await query.ToListAsync();
@@ -61,8 +61,12 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
                 Producto _producto = _mapper.Map<Producto>(request);
-
-                _producto.DetalleProducto.Add(_mapper.Map<DetalleProducto>(request));
+                _producto.EsActivo = true;
+                _producto.DetalleProducto.Add(new DetalleProducto()
+                {
+                    Stock = request.Stock,
+                    FechaVencimiento = request.FechaVencimiento,
+                });
 
                 Producto _productoCreado = await _productoRepositorio.Crear(_producto);
 
@@ -87,21 +91,18 @@ namespace SistemaVentaBlazor.Server.Controllers
             ResponseDTO<bool> _ResponseDTO = new ResponseDTO<bool>();
             try
             {
-                Producto _producto = _mapper.Map<Producto>(request);
-                Producto _productoParaEditar = await _productoRepositorio.Obtener(u => u.Id == _producto.Id);
+                Producto _productoParaEditar = await _productoRepositorio.Obtener(u => u.Id == request.IdProducto);
 
-                DetalleProducto _detalleproducto = await _productoRepositorio.ObtenerDetalle(u => u.ProductoId == _producto.Id);
+                DetalleProducto _detalleproducto = await _productoRepositorio.ObtenerDetalle(u => u.ProductoId == request.IdProducto);
 
 
                 if (_productoParaEditar != null)
                 {
-
-                    _productoParaEditar.Nombre = _producto.Nombre;
-                    _productoParaEditar.IdCategoria = _producto.IdCategoria;
+                    _productoParaEditar.Nombre = request.Nombre;
+                    _productoParaEditar.IdCategoria = request.IdCategoria;
                     _detalleproducto.Stock = request.Stock;
                     _detalleproducto.FechaVencimiento = request.FechaVencimiento;
                     _productoParaEditar.DetalleProducto.Add(_detalleproducto);
-
 
                     bool respuesta = await _productoRepositorio.Editar(_productoParaEditar);
 

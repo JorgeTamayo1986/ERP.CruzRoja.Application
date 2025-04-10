@@ -10,8 +10,7 @@ namespace SistemaVentaBlazor.Shared
     {
         public int IdVenta { get; set; }
         public string? NumeroDocumento { get; set; }
-        public int TipoSalida { get; set; }
         public DateTime? FechaRegistro { get; set; }
-        public virtual List<DetalleVentaDTO>? DetalleVenta { get; set; }
+        public virtual List<DetalleVentaDTO>? DetalleSalida { get; set; }
     }
 }

@@ -30,8 +30,9 @@ namespace SistemaVentaBlazor.Server.Controllers
             ResponseDTO<VentaDTO> _ResponseDTO = new ResponseDTO<VentaDTO>();
             try
             {
+                Salida salida = _mapper.Map<Salida>(request);
 
-                Salida venta_creada = await _ventaRepositorio.Registrar(_mapper.Map<Salida>(request));
+                Salida venta_creada = await _ventaRepositorio.Registrar(salida);
                 request = _mapper.Map<VentaDTO>(venta_creada);
 
                 if (venta_creada.IdSalida != 0)
@@ -60,8 +61,8 @@ namespace SistemaVentaBlazor.Server.Controllers
 
             try
             {
-
-                List<VentaDTO> vmHistorialVenta = _mapper.Map<List<VentaDTO>>(await _ventaRepositorio.Historial(buscarPor, numeroVenta, fechaInicio, fechaFin));
+                var query = await _ventaRepositorio.Historial(buscarPor, numeroVenta, fechaInicio, fechaFin);
+                List<VentaDTO> vmHistorialVenta = _mapper.Map<List<VentaDTO>>(query);
 
                 if (vmHistorialVenta.Count > 0)
                     _ResponseDTO = new ResponseDTO<List<VentaDTO>>() { status = true, msg = "ok", value = vmHistorialVenta };

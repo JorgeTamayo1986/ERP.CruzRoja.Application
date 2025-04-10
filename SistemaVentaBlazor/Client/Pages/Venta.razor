@@ -18,7 +18,7 @@
                 ResetValueOnEmptyText="true"
                 AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary"
                 Variant="Variant.Outlined" Margin="Margin.Dense" 
-                ToStringFunc="@(e => e == null ? null : $"{e.Nombre} - {e.DescripcionCategoria}")"
+                ToStringFunc="@(e => e == null ? null : $"{e.Nombre} - {e.DescripcionCategoria} - {e.FechaVencimiento?.ToString("yyyyMMdd")} - Stock {e.Stock}")"
                 />
             </MudItem>
             <MudItem xs="3">
@@ -60,7 +60,7 @@
 
             <MudItem xs="12">
 
-                <MudTable Items="@_venta.DetalleVenta" Dense="true" Striped="true" Bordered="true">
+                <MudTable Items="@_venta.DetalleSalida" Dense="true" Striped="true" Bordered="true">
                     <HeaderContent>
                         <MudTh>Producto</MudTh>
                         <MudTh>Cantidad</MudTh>
@@ -105,7 +105,7 @@
 
     VentaDTO _venta = new VentaDTO() 
     { 
-        DetalleVenta = new List<DetalleVentaDTO>()
+        DetalleSalida = new List<DetalleVentaDTO>()
     };
 
     private ProductoDTO _productoSeleccionado;
@@ -146,7 +146,7 @@
 
             if(_productoSeleccionado.Stock - _cantidad < 0)
             {
-                await Swal.FireAsync("Registro de salida", $"No es posible registar la cantidad solicitada para el producto, stok disponible {_productoSeleccionado.Stock }", "warning");
+                await Swal.FireAsync("Registro de salida", $"No es posible registar la cantidad solicitada para el producto, stock disponible {_productoSeleccionado.Stock }", "warning");
                 return;
             }
 
@@ -155,10 +155,10 @@
                 IdProducto = _productoSeleccionado.IdProducto,
                 DescripcionProducto = _productoSeleccionado.Nombre,
                 Cantidad = _cantidad,
-                DescripcionSalida = tipoSeleccionado.Descripcion
+                DescripcionSalida = tipoSeleccionado.Descripcion,
+                TipoSalida = tipoSeleccionado.IdTipo
             };
-            _venta.TipoSalida = tipoSeleccionado.IdTipo;
-            _venta.DetalleVenta!.Add(detalleVenta);
+            _venta.DetalleSalida!.Add(detalleVenta);
 
             _productoSeleccionado = null;
             _cantidad = 0;
@@ -168,34 +168,42 @@
 
     private async Task EliminarProducto(int idproducto)
     {
-        var productoEliminar = _venta.DetalleVenta.Find(p => p.IdProducto == idproducto);
-        _venta.DetalleVenta.Remove(productoEliminar);
+        var productoEliminar = _venta.DetalleSalida.Find(p => p.IdProducto == idproducto);
+        _venta.DetalleSalida.Remove(productoEliminar);
     }
 
     private async Task RegistrarVenta()
     {
-        botonDesactivado = true;
 
-        _venta.FechaRegistro = DateTime.Now;
-
-        var response = await _ventaServicio.Registrar(_venta);
-
-        if (response.status)
+        if (_venta.DetalleSalida.Count() > 0)
         {
-            var _ventaCreada = (VentaDTO)response.value!;
-            _venta = new VentaDTO()
-             {
-                 TipoSalida = tipoSeleccionado.IdTipo,
-                 DetalleVenta = new List<DetalleVentaDTO>()
-             };
 
-            await Swal.FireAsync("Salida Registrada", $"Numero de registro: {_ventaCreada.NumeroDocumento}", "success");
+            botonDesactivado = true;
+
+            _venta.FechaRegistro = DateTime.Now;
+
+            var response = await _ventaServicio.Registrar(_venta);
+
+            if (response.status)
+            {
+                var _ventaCreada = (VentaDTO)response.value!;
+                _venta = new VentaDTO()
+                    {
+                        DetalleSalida = new List<DetalleVentaDTO>()
+                    };
+
+                await Swal.FireAsync("Salida Registrada", $"Numero de registro: {_ventaCreada.NumeroDocumento}", "success");
+            }
+            else
+            {
+                await Swal.FireAsync("Oops...", "No se pudo registrar!", "error");
+            }
+            botonDesactivado = false;
         }
         else
         {
-            await Swal.FireAsync("Oops...", "No se pudo registrar!", "error");
+            await Swal.FireAsync("Detalle salida", "Debe adicionar al menos un producto", "warning");
         }
-        botonDesactivado = false;
 
     }
 }

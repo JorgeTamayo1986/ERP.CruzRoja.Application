@@ -43,6 +43,14 @@ namespace SistemaVentaBlazor.Server.Utilidades
 
             #region Producto
             CreateMap<Producto, ProductoDTO>()
+             .ForMember(destino =>
+                destino.IdProducto,
+                opt => opt.MapFrom(origen => origen.Id)
+            )
+            .ForMember(destino =>
+                destino.IdCategoria,
+                opt => opt.MapFrom(origen => origen.IdCategoria)
+            )
             .ForMember(destino =>
                 destino.DescripcionCategoria,
                 opt => opt.MapFrom(origen => origen.IdCategoriaNavigation.Descripcion)
@@ -71,7 +79,7 @@ namespace SistemaVentaBlazor.Server.Utilidades
            .ForMember(destino =>
                destino.Stock,
                opt => opt.MapFrom(origen => origen.Stock)
-           ); ;
+           ); 
 
             #endregion Producto
 
@@ -79,8 +87,6 @@ namespace SistemaVentaBlazor.Server.Utilidades
             CreateMap<Salida, VentaDTO>();
 
             CreateMap<VentaDTO, Salida>();
-
-          
 
 
             #endregion Salida
@@ -91,6 +97,10 @@ namespace SistemaVentaBlazor.Server.Utilidades
                 .ForMember(destino =>
                     destino.DescripcionProducto,
                     opt => opt.MapFrom(origen => origen.IdProductoNavigation.Nombre)
+                )
+                .ForMember(destino =>
+                    destino.DescripcionSalida,
+                    opt => opt.MapFrom(origen => origen.TipoSalidaNavigation.Descripcion)
                 );
 
             CreateMap<DetalleVentaDTO, DetalleSalida>();
@@ -108,12 +118,12 @@ namespace SistemaVentaBlazor.Server.Utilidades
                     opt => opt.MapFrom(origen => origen.IdVentaNavigation.NumeroDocumento)
                 )
                 .ForMember(destino =>
-                    destino.TipoPago,
-                    opt => opt.MapFrom(origen => origen.IdVentaNavigation.TipoSalida)
-                )
-                .ForMember(destino =>
                     destino.Producto,
                     opt => opt.MapFrom(origen => origen.IdProductoNavigation.Nombre)
+                )
+                .ForMember(destino =>
+                    destino.TipoSalida,
+                    opt => opt.MapFrom(origen => origen.TipoSalidaNavigation.Descripcion)
                 );
             #endregion Reporte
         }

@@ -11,5 +11,5 @@ public partial class TipoSalida
 
     public bool? EsActivo { get; set; }
 
-    public virtual ICollection<Salida> Salida { get; } = new List<Salida>();
+    public virtual ICollection<DetalleSalida> DetalleSalida { get; } = new List<DetalleSalida>();
 }

@@ -7,67 +7,67 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
-  <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
+    <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
 
-   <MudPaper Elevation="3" Class="pa-4" Width="100%">
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
 
         <div class="d-flex flex-grow-1 gap-4">
             <MudSelect T="string" Label="Buscar por" Variant="Variant.Outlined" 
-                Margin="Margin.Dense"
-                Value="buscarPor"
-                ValueChanged="OnSelectedValueChanged"
+            Margin="Margin.Dense"
+            Value="buscarPor"
+            ValueChanged="OnSelectedValueChanged"
             >
                 <MudSelectItem Value="@("Fechas")" />
                 <MudSelectItem Value="@("Numero registro")" />
             </MudSelect>
 
             <MudTextField @bind-Value="numeroVenta" Label="Numero de registro" Variant="Variant.Outlined" Margin="Margin.Dense" Class="@(noneNumero)"></MudTextField>
-           
+
             <MudDatePicker Label="Fecha Inicio" Margin="Margin.Dense" Variant="Variant.Outlined" Class="@(noneFecha)" @bind-Date="fechaInicio" Mask="@(new DateMask("dd/MM/yyyy"))" />
 
             <MudDatePicker Label="Fecha Fin" Margin="Margin.Dense" Variant="Variant.Outlined" Class="@(noneFecha)" @bind-Date="fechaFin" Mask="@(new DateMask("dd/MM/yyyy"))" />
 
 
             <MudButton Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Search"
-                       Color="Color.Info"
-                       Size="Size.Medium"
-                       Class="mt-1"
-                       OnClick="Buscar"
+            StartIcon="@Icons.Material.Filled.Search"
+            Color="Color.Info"
+            Size="Size.Medium"
+            Class="mt-1"
+            OnClick="Buscar"
             >Buscar</MudButton>
 
         </div>
 
         <MudGrid>
             <MudItem xs="12">
-       
+
             </MudItem>
             <MudItem xs="12">
 
                 <MudTable 
-                    Items="@listaVentas"
-                    Dense="true"
-                    Striped="true" Bordered="true"
-                    Loading="@_loading" LoadingProgressColor="Color.Info"
+                Items="@listaVentas"
+                Dense="true"
+                Striped="true" Bordered="true"
+                Loading="@_loading" LoadingProgressColor="Color.Info"
                 >
                     <HeaderContent>
                         <MudTh>Fecha Registro</MudTh>
                         <MudTh>Numero Registro</MudTh>
-                        <MudTh>Tipo de Salida</MudTh>
+                        <MudTh>Total Productos</MudTh>
                         @* <MudTh>Total</MudTh> *@
                         <MudTh></MudTh>
                     </HeaderContent>
                     <RowTemplate Context="ventaRow">
-                        <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro.Value.ToString("dd/MM/yyyy")</MudTd>
+                        <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro?.ToString("dd/MM/yyyy")</MudTd>
                         <MudTd DataLabel="Numero Registro">@ventaRow.NumeroDocumento</MudTd>
-                        <MudTd DataLabel="Tipo de salida">@ventaRow.TipoSalida</MudTd>
+                        <MudTd DataLabel="Total Productos">@ventaRow.DetalleSalida?.Count()</MudTd>
                         @* <MudTd DataLabel="Total">@ventaRow.Total</MudTd> *@
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Primary" 
-                                StartIcon="@Icons.Material.Filled.RemoveRedEye"
-                                Size="Size.Small" 
-                                IconSize="Size.Small"
-                                OnClick="@(() => mostrarDetalle(ventaRow))"
+                            StartIcon="@Icons.Material.Filled.RemoveRedEye"
+                            Size="Size.Small" 
+                            IconSize="Size.Small"
+                            OnClick="@(() => mostrarDetalle(ventaRow))"
                             />
                         </MudTd>
                     </RowTemplate>
@@ -76,10 +76,10 @@
                     </PagerContent>
                 </MudTable>
 
-               
+
             </MudItem>
-    </MudGrid>
-   </MudPaper>
+        </MudGrid>
+    </MudPaper>
 
 </MudContainer>
 @code {
@@ -126,24 +126,37 @@
 
         if(buscarPor == "Fechas")
         {
-            _bpor = "fecha";
-            _fechaInicio = fechaInicio.Value.ToString("dd/MM/yyyy");
-            _fechaFin = fechaFin.Value.ToString("dd/MM/yyyy");
-            numeroVenta = "";
+
+            if (!fechaInicio.HasValue || !fechaFin.HasValue)
+            {
+                 await Swal.FireAsync("Error", "Debe seleccionar un rango de fechas para la consulta", "error");
+            }
+            else
+            {
+                _bpor = "fecha";
+                _fechaInicio = fechaInicio.Value.ToString("dd/MM/yyyy");
+                _fechaFin = fechaFin.Value.ToString("dd/MM/yyyy");
+                numeroVenta = "";
+
+                var resultado = await _ventaServicio.Historial(_bpor, numeroVenta, _fechaInicio, _fechaFin);
+                if (resultado.status)
+                    listaVentas = (List<VentaDTO>)resultado.value!;
+                else
+                    listaVentas = new List<VentaDTO>();
+            }
         }
         else
         {
             _bpor = "numero";
             _fechaInicio = "";
             _fechaFin = "";
+
+            var resultado = await _ventaServicio.Historial(_bpor, numeroVenta, _fechaInicio, _fechaFin);
+            if (resultado.status)
+                listaVentas = (List<VentaDTO>)resultado.value!;
+            else
+                listaVentas = new List<VentaDTO>();
         }
-
-
-        var resultado = await _ventaServicio.Historial(_bpor, numeroVenta, _fechaInicio,_fechaFin);
-        if (resultado.status)
-            listaVentas = (List<VentaDTO>)resultado.value!;
-        else
-            listaVentas = new List<VentaDTO>();
 
         _loading = false;
     }

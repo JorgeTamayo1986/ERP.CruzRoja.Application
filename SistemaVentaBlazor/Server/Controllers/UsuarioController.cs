@@ -31,7 +31,7 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
                 List<UsuarioDTO> ListaUsuarios = new List<UsuarioDTO>();
-                IQueryable<Usuario> query = await _usuarioRepositorio.Consultar();
+                IQueryable<Usuario> query = await _usuarioRepositorio.Consultar(f => f.EsActivo == true);
                 query = query.Include(r => r.IdRolNavigation);
 
                 ListaUsuarios = _mapper.Map<List<UsuarioDTO>>(query.ToList());
@@ -57,7 +57,7 @@ namespace SistemaVentaBlazor.Server.Controllers
             ResponseDTO<Usuario> _ResponseDTO = new ResponseDTO<Usuario>();
             try
             {
-                Usuario _usuario = await _usuarioRepositorio.Obtener(u => u.Correo == correo && u.Clave == clave);
+                Usuario _usuario = await _usuarioRepositorio.Obtener(u => u.Correo == correo && u.Clave == clave && u.EsActivo == true);
 
                 if (_usuario != null)
                     _ResponseDTO = new ResponseDTO<Usuario>() { status = true, msg = "ok", value = _usuario };
@@ -106,7 +106,7 @@ namespace SistemaVentaBlazor.Server.Controllers
             try
             {
                 Usuario _usuario = _mapper.Map<Usuario>(request);
-                Usuario _usuarioParaEditar = await _usuarioRepositorio.Obtener(u => u.IdUsuario == _usuario.IdUsuario);
+                Usuario _usuarioParaEditar = await _usuarioRepositorio.Obtener(u => u.IdUsuario == _usuario.IdUsuario && u.EsActivo.Value);
 
                 if (_usuarioParaEditar != null)
                 {
@@ -150,7 +150,7 @@ namespace SistemaVentaBlazor.Server.Controllers
 
                 if (_usuarioEliminar != null)
                 {
-
+                    _usuarioEliminar.EsActivo = false;
                     bool respuesta = await _usuarioRepositorio.Eliminar(_usuarioEliminar);
 
                     if (respuesta)

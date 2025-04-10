@@ -73,7 +73,6 @@ go
 create table Salida(
     idSalida int primary key identity(1,1),
     numeroDocumento varchar(40),
-    tipoSalida Int FOREIGN KEY REFERENCES TipoSalida(idTipo),
     fechaRegistro datetime default getdate()
 )
 go
@@ -82,6 +81,7 @@ create table DetalleSalida(
     idDetalleVenta int primary key identity(1,1),
     idVenta int references Salida(idSalida),
     idProducto int references Producto(id),
+    tipoSalida Int FOREIGN KEY REFERENCES TipoSalida(idTipo),
     cantidad int
 )
 

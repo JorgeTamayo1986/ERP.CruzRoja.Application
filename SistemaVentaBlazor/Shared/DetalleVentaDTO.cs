@@ -10,6 +10,8 @@ namespace SistemaVentaBlazor.Shared
     {
         public int IdProducto { get; set; }
         public string? DescripcionProducto { get; set; }
+        public int TipoSalida { get; set; }
+
         public int? Cantidad { get; set; }
         public string? DescripcionSalida { get; set; }
     }

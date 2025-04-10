@@ -1,16 +1,13 @@
 
 --INSERTAR ROLES
-insert into rol(descripcion,esActivo) values
+insert into rol(descripcion,esActivo) values 
 ('Administrador',1),
 ('Auxiliar',1)
 
 go
 
 --INSERTAR USUARIOS
-insert into usuario(nombreApellidos,correo,idRol,Clave,esActivo) values
-('Miguel Felipe Salazar','admin@gmail.com',1,'12345',1),
-('Jorge Tamayo','jetr@gmamail.com',2,'12345',1)
-
+insert into usuario(nombreApellidos,correo,idRol,Clave,esActivo) values('Miguel Felipe Salazar','admin@gmail.com',1,'12345',1)
 go
 --INSERTAR CATEGORIAS
 

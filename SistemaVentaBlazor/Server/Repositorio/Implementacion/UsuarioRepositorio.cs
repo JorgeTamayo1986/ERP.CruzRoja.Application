@@ -52,7 +52,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                _dbContext.Remove(entidad);
+                _dbContext.Update(entidad);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }

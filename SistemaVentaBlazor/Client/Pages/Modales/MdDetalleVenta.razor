@@ -8,19 +8,18 @@
                     <div class="d-flex flex-grow-1 gap-4">
                         <MudTextField @bind-Value="_venta.FechaRegistro" Label="Fecha Registro" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense"></MudTextField>
                         <MudTextField @bind-Value="_venta.NumeroDocumento" Label="Numero Salida" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense"></MudTextField>
-                        <MudTextField @bind-Value="_venta.TipoSalida" Label="Tipo de Salida" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense"></MudTextField>
                         @* <MudTextField @bind-Value="_venta.Total" Label="Total" Variant="Variant.Outlined" ReadOnly="true" Margin="Margin.Dense"></MudTextField> *@
                     </div>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudText>Lista de productos</MudText>
+             <MudText>Lista de productos</MudText>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudDataGrid Items="@_venta.DetalleVenta" Dense="true" Striped="true">
+                    <MudDataGrid Items="@_venta.DetalleSalida" Dense="true" Striped="true">
                         <Columns>
                             <PropertyColumn Property="x => x.DescripcionProducto" Title="Producto" />
                             <PropertyColumn Property="x => x.Cantidad" />
-                            @* <PropertyColumn Property="x => x.Precio" /> *@
+                            <PropertyColumn Property="x => x.DescripcionSalida" Title="Salida" />
                             @* <PropertyColumn Property="x => x.Total" /> *@
                         </Columns>
                     </MudDataGrid>

@@ -80,16 +80,16 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
                     v.FechaRegistro.Value.Date >= fech_Inicio.Date &&
                     v.FechaRegistro.Value.Date <= fech_Fin.Date
                 )
-                .Include(dv => dv.DetalleSalida)
-                .ThenInclude(p => p.IdProductoNavigation)
+                .Include(dv => dv.DetalleSalida).ThenInclude(p => p.TipoSalidaNavigation)
+                .Include(dv => dv.DetalleSalida).ThenInclude(p => p.IdProductoNavigation)
                 .ToList();
 
             }
             else
             {
                 return query.Where(v => v.NumeroDocumento == numeroVenta)
-                  .Include(dv => dv.DetalleSalida)
-                  .ThenInclude(p => p.IdProductoNavigation)
+                  .Include(dv => dv.DetalleSalida).ThenInclude(p => p.TipoSalidaNavigation)
+                  .Include(dv => dv.DetalleSalida).ThenInclude(p => p.IdProductoNavigation)
                   .ToList();
             }
 
@@ -105,6 +105,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
             List<DetalleSalida> listaResumen = await _dbcontext.DetalleSalida
                 .Include(p => p.IdProductoNavigation)
                 .Include(v => v.IdVentaNavigation)
+                .Include(f => f.TipoSalidaNavigation)
                 .Where(dv => dv.IdVentaNavigation.FechaRegistro.Value.Date >= fech_Inicio.Date && dv.IdVentaNavigation.FechaRegistro.Value.Date <= fech_Fin.Date)
                 .ToListAsync();
 

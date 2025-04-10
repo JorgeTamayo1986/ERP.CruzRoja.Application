@@ -15,7 +15,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         }
         public async Task<IQueryable<Producto>> Consultar(Expression<Func<Producto, bool>> filtro = null)
         {
-            IQueryable<Producto> queryEntidad = filtro == null ? _dbContext.Producto.Include(f => f.DetalleProducto): _dbContext.Producto.Where(filtro);
+            IQueryable<Producto> queryEntidad = filtro == null ? _dbContext.Producto.Include(f => f.DetalleProducto): _dbContext.Producto.Include(f => f.DetalleProducto).Where(filtro);
 
 
             return queryEntidad;

@@ -8,23 +8,23 @@
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
-  <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
+    <MudText Typo="Typo.h5" GutterBottom="true">Historial Salidas</MudText>
 
-   <MudPaper Elevation="3" Class="pa-4" Width="100%">
+    <MudPaper Elevation="3" Class="pa-4" Width="100%">
 
         <div class="d-flex flex-grow-1 gap-3">
-  
+
             <MudDatePicker Label="Fecha Inicio" Margin="Margin.Dense" Variant="Variant.Outlined" @bind-Date="fechaInicio" Mask="@(new DateMask("dd/MM/yyyy"))" />
 
             <MudDatePicker Label="Fecha Fin" Margin="Margin.Dense" Variant="Variant.Outlined"  @bind-Date="fechaFin" Mask="@(new DateMask("dd/MM/yyyy"))" />
 
 
             <MudButton Variant="Variant.Filled"
-                       StartIcon="@Icons.Material.Filled.Search"
-                       Color="Color.Info"
-                       Size="Size.Medium"
-                       Class="mt-1"
-                       OnClick="Buscar"
+            StartIcon="@Icons.Material.Filled.Search"
+            Color="Color.Info"
+            Size="Size.Medium"
+            Class="mt-1"
+            OnClick="Buscar"
             >Buscar</MudButton>
 
         </div>
@@ -32,39 +32,35 @@
         <MudGrid>
             <MudItem xs="12">
                 <MudButton Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.DataThresholding"
-                           Color="Color.Success"
-                           Size="Size.Medium"
-                           Class="mt-1"
-                           OnClick="ExportarExcel" Disabled="@desactivarBoton">Exportar Excel</MudButton>
+                StartIcon="@Icons.Material.Filled.DataThresholding"
+                Color="Color.Success"
+                Size="Size.Medium"
+                Class="mt-1"
+                OnClick="ExportarExcel" Disabled="@desactivarBoton">Exportar Excel</MudButton>
             </MudItem>
             <MudItem xs="12">
 
                 <MudTable 
-                    Items="@listaVentas"
-                    Dense="true"
-                    Striped="true" Bordered="true"
-                    Loading="@_loading" LoadingProgressColor="Color.Info"
+                Items="@listaVentas"
+                Dense="true"
+                Striped="true" Bordered="true"
+                Loading="@_loading" LoadingProgressColor="Color.Info"
                 >
                     <HeaderContent>
-                        <MudTh>Fecha Registro</MudTh>
                         <MudTh>Numero registro</MudTh>
-                        <MudTh>Tipo de salida</MudTh>
-                        @* <MudTh>Total</MudTh> *@
+                        <MudTh>Tipo Salida</MudTh>
+                        <MudTh>Fecha Registro</MudTh>
                         <MudTh>Producto</MudTh>
                         <MudTh>Cantidad</MudTh>
-                 @*        <MudTh>Precio</MudTh>
-                        <MudTh>Total por Producto</MudTh> *@
+
                     </HeaderContent>
                     <RowTemplate Context="ventaRow">
-                        <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro</MudTd>
                         <MudTd DataLabel="Numero registro">@ventaRow.NumeroDocumento</MudTd>
-                        <MudTd DataLabel="Tipo de salida">@ventaRow.TipoPago</MudTd>
-                        @* <MudTd DataLabel="Total">@ventaRow.TotalVenta</MudTd> *@
+                        <MudTd DataLabel="Tipo Salida">@ventaRow.TipoSalida</MudTd>
+                        <MudTd DataLabel="Fecha Registro">@ventaRow.FechaRegistro</MudTd>
                         <MudTd DataLabel="Producto">@ventaRow.Producto</MudTd>
                         <MudTd DataLabel="Cantidad">@ventaRow.Cantidad</MudTd>
-                       @*  <MudTd DataLabel="Precio">@ventaRow.Precio</MudTd>
-                        <MudTd DataLabel="Total por Producto">@ventaRow.Total</MudTd> *@
+
                     </RowTemplate>
                     <PagerContent>
                         <MudTablePager />
@@ -73,9 +69,9 @@
 
 
             </MudItem>
-    </MudGrid>
+        </MudGrid>
 
-   </MudPaper>
+    </MudPaper>
 
 </MudContainer>
 @code {
@@ -89,23 +85,30 @@
 
     private async Task Buscar()
     {
-        _loading = true;
-        string _fechaInicio;
-        string _fechaFin;
-
-        _fechaInicio = fechaInicio.Value.ToString("dd/MM/yyyy");
-        _fechaFin = fechaFin.Value.ToString("dd/MM/yyyy");
-
-        var resultado = await _ventaServicio.Reporte(_fechaInicio, _fechaFin);
-        if (resultado.status)
+        if (!fechaInicio.HasValue || !fechaFin.HasValue)
         {
-            listaVentas = (List<ReporteDTO>)resultado.value!;
-            desactivarBoton = false;
+            await Swal.FireAsync("Error", "Debe seleccionar un rango de fechas para la consulta", "error");
         }
         else
         {
-            listaVentas = new List<ReporteDTO>();
-            desactivarBoton = true;
+            _loading = true;
+            string _fechaInicio;
+            string _fechaFin;
+
+            _fechaInicio = fechaInicio.Value.ToString("dd/MM/yyyy");
+            _fechaFin = fechaFin.Value.ToString("dd/MM/yyyy");
+
+            var resultado = await _ventaServicio.Reporte(_fechaInicio, _fechaFin);
+            if (resultado.status)
+            {
+                listaVentas = (List<ReporteDTO>)resultado.value!;
+                desactivarBoton = false;
+            }
+            else
+            {
+                listaVentas = new List<ReporteDTO>();
+                desactivarBoton = true;
+            }
         }
 
         _loading = false;
@@ -118,13 +121,14 @@
             
             using (var libro = new XLWorkbook())
             {
-                IXLWorksheet hoja = libro.Worksheets.Add("ventas");
+                IXLWorksheet hoja = libro.Worksheets.Add("Salidas");
 
                 hoja.Cell(1, 1).Value = "Numero Registro";
-                hoja.Cell(1, 2).Value = "Tipo de Salida";
+                hoja.Cell(1, 2).Value = "Tipo Salida";
                 hoja.Cell(1, 3).Value = "Fecha Registro";
                 hoja.Cell(1, 4).Value = "Producto";
                 hoja.Cell(1, 5).Value = "Cantidad";
+
  
                 hoja.Cell(2, 1).InsertData(listaVentas);
 
