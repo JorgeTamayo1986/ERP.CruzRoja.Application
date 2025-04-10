@@ -1,6 +1,14 @@
-﻿<MudNavMenu>
+﻿@using Newtonsoft.Json
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject NavigationManager _navigationManager
+@inject IJSRuntime _jsServicio;
+
+<MudNavMenu>
     @* <MudNavLink Href="/page/dashboard" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Dashboard">DashBoard</MudNavLink> *@
-    <MudNavLink Href="/page/usuario" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person2">Usuarios</MudNavLink>
+    @if (mostrarAdmin)
+    {
+        <MudNavLink Href="/page/usuario" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Person2">Usuarios</MudNavLink>
+    }
     <MudNavLink Href="/page/producto" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.AllInbox">Productos</MudNavLink>
     <MudNavLink Href="/page/venta" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.ExitToApp">Salidas</MudNavLink>
     <MudNavLink Href="/page/historialventa" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.PlaylistAddCheckCircle">Historial Salidas</MudNavLink>
@@ -11,3 +19,30 @@
 <div class="mt-auto pa-4 d-flex justify-center">
     <img src="img/LogoCr2.jpeg" alt="Footer" style="height: 120px;" />
 </div>
+
+@code{
+    private bool mostrarAdmin = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var storage = await localStorage.GetItemAsync<string>("profile");
+        
+        if (!string.IsNullOrEmpty(storage))
+        {
+            try
+            {
+                var json = await _jsServicio.Decrypt(storage);
+                var profile = JsonConvert.DeserializeObject<UsuarioDTO>(json);
+                mostrarAdmin = profile?.Codigo == "ADMIN";
+            }
+            catch
+            {
+                mostrarAdmin = false; // Si no se puede desencriptar, evita error
+            }
+            
+        }
+        else
+            _navigationManager.NavigateTo("/");
+    }
+}

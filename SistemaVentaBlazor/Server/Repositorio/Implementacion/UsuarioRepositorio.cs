@@ -78,7 +78,7 @@ namespace SistemaVentaBlazor.Server.Repositorio.Implementacion
         {
             try
             {
-                return await _dbContext.Usuario.Where(filtro).FirstOrDefaultAsync();
+                return await _dbContext.Usuario.AsNoTracking().Include(f => f.IdRolNavigation).Where(filtro).FirstOrDefaultAsync();
             }
             catch
             {

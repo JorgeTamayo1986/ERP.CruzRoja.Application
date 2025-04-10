@@ -18,6 +18,10 @@ namespace SistemaVentaBlazor.Server.Utilidades
                 .ForMember(destino =>
                     destino.rolDescripcion,
                     opt => opt.MapFrom(origen => origen.IdRolNavigation.Descripcion)
+                )
+                 .ForMember(destino =>
+                    destino.Codigo,
+                    opt => opt.MapFrom(origen => origen.IdRolNavigation.Codigo)
                 );
 
             CreateMap<UsuarioDTO, Usuario>()

@@ -10,6 +10,7 @@ go
 
 create table Rol(
 idRol int primary key identity(1,1),
+Codigo varchar(10),
 descripcion varchar(50),
 esActivo bit,
 fechaRegistro datetime default getdate()

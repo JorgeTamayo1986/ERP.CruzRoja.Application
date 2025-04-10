@@ -54,21 +54,26 @@ namespace SistemaVentaBlazor.Server.Controllers
         [Route("IniciarSesion")]
         public async Task<IActionResult> IniciarSesion(string correo, string clave)
         {
-            ResponseDTO<Usuario> _ResponseDTO = new ResponseDTO<Usuario>();
+            ResponseDTO<UsuarioDTO> _ResponseDTO = new ResponseDTO<UsuarioDTO>();
             try
             {
                 Usuario _usuario = await _usuarioRepositorio.Obtener(u => u.Correo == correo && u.Clave == clave && u.EsActivo == true);
 
+               
                 if (_usuario != null)
-                    _ResponseDTO = new ResponseDTO<Usuario>() { status = true, msg = "ok", value = _usuario };
+                {
+                    UsuarioDTO _usuarioResponse = _mapper.Map<UsuarioDTO>(_usuario);
+
+                    _ResponseDTO = new ResponseDTO<UsuarioDTO>() { status = true, msg = "ok", value = _usuarioResponse };
+                }
                 else
-                    _ResponseDTO = new ResponseDTO<Usuario>() { status = false, msg = "no encontrado", value = null };
+                    _ResponseDTO = new ResponseDTO<UsuarioDTO>() { status = false, msg = "no encontrado", value = null };
 
                 return StatusCode(StatusCodes.Status200OK, _ResponseDTO);
             }
             catch (Exception ex)
             {
-                _ResponseDTO = new ResponseDTO<Usuario>() { status = false, msg = ex.Message, value = null };
+                _ResponseDTO = new ResponseDTO<UsuarioDTO>() { status = false, msg = ex.Message, value = null };
                 return StatusCode(StatusCodes.Status500InternalServerError, _ResponseDTO);
             }
         }

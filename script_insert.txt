@@ -1,8 +1,8 @@
 
 --INSERTAR ROLES
-insert into rol(descripcion,esActivo) values 
-('Administrador',1),
-('Auxiliar',1)
+insert into rol(Codigo,descripcion,esActivo) values 
+('ADMIN','Administrador',1),
+('AUX','Auxiliar',1)
 
 go
 

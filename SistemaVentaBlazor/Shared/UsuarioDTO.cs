@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SistemaVentaBlazor.Shared
+﻿namespace SistemaVentaBlazor.Shared
 {
     public class UsuarioDTO
     {
@@ -14,5 +8,6 @@ namespace SistemaVentaBlazor.Shared
         public int IdRol { get; set; }
         public string? rolDescripcion { get; set; }
         public string? Clave { get; set; }
+        public string? Codigo { get; set; }
     }
 }

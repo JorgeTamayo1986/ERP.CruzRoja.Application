@@ -118,6 +118,9 @@ public partial class InventarioContext : DbContext
             entity.HasKey(e => e.IdRol).HasName("PK__Rol__3C872F76B911E627");
 
             entity.Property(e => e.IdRol).HasColumnName("idRol");
+            entity.Property(e => e.Codigo)
+                .HasMaxLength(10)
+                .IsUnicode(false);
             entity.Property(e => e.Descripcion)
                 .HasMaxLength(50)
                 .IsUnicode(false)

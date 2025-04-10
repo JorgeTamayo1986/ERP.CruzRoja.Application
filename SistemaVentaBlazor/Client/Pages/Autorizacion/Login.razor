@@ -1,6 +1,10 @@
 ﻿@page "/"
+@using Newtonsoft.Json
 @inject NavigationManager _navigationManager
 @inject IUsuarioService _usuarioServicio
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime _jsServicio;
+
 
 @layout LoginLayout
 
@@ -12,28 +16,28 @@
 
 
     <MudTextField 
-        T="string" 
-        @bind-Value="@usuarioLogin.Correo" 
-        Label="Correo" 
-        Variant="Variant.Outlined" 
-        Class="my-6"
-        For="@(() => usuarioLogin.Correo)">
+    T="string" 
+    @bind-Value="@usuarioLogin.Correo" 
+    Label="Correo" 
+    Variant="Variant.Outlined" 
+    Class="my-6"
+    For="@(() => usuarioLogin.Correo)">
     </MudTextField>
 
     <MudTextField 
-        @bind-Value="@usuarioLogin.Password" 
-        Label="Contraseña" 
-        Variant="Variant.Outlined" 
-        InputType="@PasswordInput" 
-        Adornment="Adornment.End" 
-        AdornmentIcon="@PasswordInputIcon" 
-        OnAdornmentClick="TogglePasswordVisibility"
-                  For="@(() => usuarioLogin.Password)" />
+    @bind-Value="@usuarioLogin.Password" 
+    Label="Contraseña" 
+    Variant="Variant.Outlined" 
+    InputType="@PasswordInput" 
+    Adornment="Adornment.End" 
+    AdornmentIcon="@PasswordInputIcon" 
+    OnAdornmentClick="TogglePasswordVisibility"
+    For="@(() => usuarioLogin.Password)" />
 
     <MudButton Class="mt-5" Variant="Variant.Filled" Color="Color.Primary" ButtonType="ButtonType.Submit" Size="Size.Large" 
     FullWidth="true"
-               Disabled="@disableButton">Iniciar Sesión</MudButton>
-    
+    Disabled="@disableButton">Iniciar Sesión</MudButton>
+
     <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="@(myImageClass + " my-7")" />
 </EditForm>
 
@@ -73,7 +77,13 @@
         var result = await _usuarioServicio.IniciarSesion(usuarioLogin);
 
         if (result.status)
+        {
+            var jsonValue = JsonConvert.SerializeObject(result.value);
+            var encriptValue = await _jsServicio.Encrypt(jsonValue);
+            await localStorage.SetItemAsync("profile", encriptValue);
             _navigationManager.NavigateTo("/page/producto");
+        }
+      
         else
         {
             myImageClass = "d-none";

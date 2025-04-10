@@ -13,5 +13,7 @@ public partial class Rol
 
     public DateTime? FechaRegistro { get; set; }
 
+    public string? Codigo { get; set; }
+
     public virtual ICollection<Usuario> Usuario { get; } = new List<Usuario>();
 }

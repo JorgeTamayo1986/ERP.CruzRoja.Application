@@ -1,5 +1,6 @@
 global using SistemaVentaBlazor.Client.Servicios.Contrato;
 global using SistemaVentaBlazor.Shared;
+using Blazored.LocalStorage;
 using CurrieTechnologies.Razor.SweetAlert2;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -7,6 +8,8 @@ using MudBlazor;
 using MudBlazor.Services;
 using SistemaVentaBlazor.Client;
 using SistemaVentaBlazor.Client.Servicios.Implementacion;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -33,6 +36,17 @@ builder.Services.AddMudServices(config =>
     config.SnackbarConfiguration.HideTransitionDuration = 1000;
     config.SnackbarConfiguration.ShowTransitionDuration = 1000;
     config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
+
+builder.Services.AddBlazoredLocalStorage(config =>
+{
+    config.JsonSerializerOptions.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase;
+    config.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    config.JsonSerializerOptions.IgnoreReadOnlyProperties = true;
+    config.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    config.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    config.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+    config.JsonSerializerOptions.WriteIndented = false;
 });
 
 builder.Services.AddSweetAlert2();
