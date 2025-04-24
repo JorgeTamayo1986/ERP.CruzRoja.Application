@@ -1,8 +1,11 @@
 ﻿@page "/page/producto"
+@using ClosedXML.Excel;
+@inject IJSRuntime _jsServicio;
 @inject IProductoService _productoServicio
 @inject IDialogService _dialogServicio
 @inject ISnackbar _snackBar
 @inject SweetAlertService Swal;
+
 
 <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="mt-5">
 
@@ -12,18 +15,23 @@
         <MudGrid>
             <MudItem xs="12">
                 <MudButton Variant="Variant.Filled"
-                           StartIcon="@Icons.Material.Filled.Add"
-                           Color="Color.Primary"
-                           OnClick="AbrirNuevoProducto">
+                StartIcon="@Icons.Material.Filled.Add"
+                Color="Color.Primary"
+                OnClick="AbrirNuevoProducto">
                     Nuevo Producto
                 </MudButton>
+    
+                <MudButton Variant="Variant.Filled"
+                StartIcon="@Icons.Material.Filled.DataThresholding"
+                Color="Color.Success"
+                OnClick="ExportarExcel">Exportar Excel</MudButton>
             </MudItem>
             <MudItem xs="12">
 
                 <MudTable Items="@listaProductos"
-                          Striped="true" Bordered="true" Dense="true"
-                          Filter="new Func<ProductoDTO,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1"
-                          Loading="@_loading" LoadingProgressColor="Color.Info">
+                Striped="true" Bordered="true" Dense="true"
+                Filter="new Func<ProductoDTO,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1"
+                Loading="@_loading" LoadingProgressColor="Color.Info">
                     <ToolBarContent>
                         <MudSpacer />
                         <MudTextField @bind-Value="searchString1" Placeholder="Buscar" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
@@ -42,15 +50,15 @@
                         <MudTd DataLabel="Fecha Vencimiento">@productoRow.FechaVencimiento?.ToString("dd/MM/yyyy")</MudTd>
                         <MudTd DataLabel="">
                             <MudFab Color="Color.Primary"
-                                    StartIcon="@Icons.Material.Filled.Edit"
-                                    Size="Size.Small"
-                                    IconSize="Size.Small"
-                                    OnClick="@(() => AbrirEditarProducto(productoRow))" />
+                            StartIcon="@Icons.Material.Filled.Edit"
+                            Size="Size.Small"
+                            IconSize="Size.Small"
+                            OnClick="@(() => AbrirEditarProducto(productoRow))" />
                             <MudFab Color="Color.Error"
-                                    StartIcon="@Icons.Material.Filled.Delete"
-                                    Size="Size.Small"
-                                    IconSize="Size.Small"
-                                    OnClick="@(() => EliminarUsuario(productoRow))" />
+                            StartIcon="@Icons.Material.Filled.Delete"
+                            Size="Size.Small"
+                            IconSize="Size.Small"
+                            OnClick="@(() => EliminarUsuario(productoRow))" />
                         </MudTd>
                     </RowTemplate>
                     <PagerContent>
@@ -67,6 +75,7 @@
 
 @code {
     List<ProductoDTO> listaProductos = new List<ProductoDTO>();
+    List<ExportarProductoDTO> exportarProductos = new();
     private string searchString1 = "";
     private ProductoDTO selectedItem1 = null;
     private bool _loading = true;
@@ -78,6 +87,16 @@
         if (result.status)
         {
             listaProductos = (List<ProductoDTO>)result.value!;
+            foreach (var item in listaProductos)
+            {
+                exportarProductos.Add(new ExportarProductoDTO()
+                {
+                    Nombre = item.Nombre,
+                    DescripcionCategoria = item.DescripcionCategoria,
+                    Stock = item.Stock,
+                    FechaVencimiento = item.FechaVencimiento
+                });
+            }
         }
     }
 
@@ -153,6 +172,38 @@
             else
                 _snackBar.Add("No se pudo eliminar", Severity.Error, a => a.VisibleStateDuration = 500);
         }
+    }
+
+    private async Task ExportarExcel()
+    {
+        if (exportarProductos.Any())
+        {
+
+            using (var libro = new XLWorkbook())
+            {
+                IXLWorksheet hoja = libro.Worksheets.Add("Productos");
+
+                hoja.Cell(1, 1).Value = "Nombre";
+                hoja.Cell(1, 2).Value = "Categoría";
+                hoja.Cell(1, 3).Value = "Stock";
+                hoja.Cell(1, 4).Value = "Fecha Vencimiento";
+
+
+
+                hoja.Cell(2, 1).InsertData(exportarProductos);
+
+                using (var memoria = new MemoryStream())
+                {
+                    libro.SaveAs(memoria);
+
+                    var nombreExcel = string.Concat("Reporte Productos", DateTime.Now.ToString(), ".xlsx");
+                    await _jsServicio.GenerarArchivo(nombreExcel, memoria.ToArray());
+
+                }
+            }
+        }
+
+
     }
 
 }
